@@ -1,0 +1,51 @@
+﻿@using DemoRest.Client.Services;
+@using DemoRest.Model.Models;
+@inject IBookService _bookService;
+
+<EditForm EditContext="@editContext" OnSubmit="@HandleSubmit" class="w-100 justify-content-center d-flex flex-column px-5">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group w-100 py-1">
+        <label for="InputTitle">Title</label>
+        <InputText @bind-Value="bookFormInput.Title" type="text" class="form-control shadow-none" id="InputTitle" aria-describedby="titleHelper" placeholder="Title..." />
+        <small id="titleHelper" class="form-text text-muted">Title is required.</small>
+    </div>
+    <div class="form-group w-100 py-1">
+        <label for="InputDescription">Description</label>
+        <InputText @bind-Value="bookFormInput.Description" type="text" class="form-control shadow-none" id="InputDescription" aria-describedby="descriptionHelper" placeholder="Description..." />
+        <small id="descriptionHelper" class="form-text text-muted">Description is not required.</small>
+    </div>
+    <div class="form-group w-100 py-1">
+        <label for="InputAmount">Amount</label>
+        <InputNumber @bind-Value="bookFormInput.Amount" type="text" class="form-control shadow-none" id="InputAmount" aria-describedby="amountHelper" placeholder="Amount..." />
+        <small id="amountHelper" class="form-text text-muted">Amount is required.</small>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3 mb-5">Submit</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public EventCallback SubmitCallback { get; set; }
+
+    private BookFormInput bookFormInput = new BookFormInput();
+    private EditContext? editContext;
+
+    protected override void OnInitialized()
+    {
+        editContext = new(bookFormInput);
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (editContext == null || !editContext.Validate())
+        {
+            Console.WriteLine("Check out I am logging it in Web Browser Console");
+            return;
+        }
+        await _bookService.AddBookAsync(bookFormInput);
+        await SubmitCallback.InvokeAsync();
+        bookFormInput.Title = "";
+        bookFormInput.Description = "";
+        bookFormInput.Amount = 0;
+    }
+}

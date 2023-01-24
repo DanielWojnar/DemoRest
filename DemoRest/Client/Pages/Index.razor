@@ -1,0 +1,40 @@
+﻿@page "/"
+@inject IJSRuntime JSRuntime
+
+<PageTitle>DemoRest Home</PageTitle>
+
+<h1>Wecome to the demo!</h1>
+<h4>Did you know I can invoke javascript code O.O?</h4>
+<button class="btn btn-primary" @onclick="callAlert">Check if its true!</button>
+<button class="btn btn-primary" @onclick="changeBoxColor">Change elements using JS!</button>
+<button class="btn btn-primary" @onclick="returnRandomValue">Receive value from JS!</button>
+<button class="btn btn-primary" onclick="incrementRandomNumber()">Now make JS invoke C# method!</button>
+<div id="TestBox" class="mt-5 d-flex bg-black bg-success text-white justify-content-center align-items-center" style="height: 400px; width: 400px">
+    @valueFromJs
+</div>
+
+
+@code{
+    private int valueFromJs;
+
+    [JSInvokable]
+    public static Task<int> Increment(int value)
+    {
+        return Task.FromResult(value + 1);
+    }
+
+    private async Task callAlert()
+    {
+        await JSRuntime.InvokeVoidAsync("welcomeAlert");
+    }
+
+    private async Task changeBoxColor()
+    {
+        await JSRuntime.InvokeVoidAsync("toggleClass", "TestBox", "bg-black");
+    }
+
+    private async Task returnRandomValue()
+    {
+        valueFromJs = await JSRuntime.InvokeAsync<int>("returnRandomValue");
+    }
+}

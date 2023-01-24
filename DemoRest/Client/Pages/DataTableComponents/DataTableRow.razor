@@ -1,0 +1,13 @@
+﻿@using DemoRest.Model.Models;
+
+<tr>
+    <th scope="row">@BookModel.Id</th>
+    <td>@BookModel.Title</td>
+    <td>@BookModel.Description</td>
+    <td>@BookModel.Amount</td>
+</tr>
+
+@code {
+    [Parameter]
+    public Book BookModel { get; set; }
+}
